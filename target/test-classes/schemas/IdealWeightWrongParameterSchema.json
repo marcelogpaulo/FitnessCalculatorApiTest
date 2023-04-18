@@ -1,0 +1,18 @@
+{
+  "type": "object",
+  "properties": {
+    "status_code": {
+      "type": "integer"
+    },
+    "request_result": {
+      "type": "string"
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": ["status_code", "request_result", "errors"]
+}

@@ -1,0 +1,30 @@
+{
+  "type": "object",
+  "properties": {
+    "status_code": {
+      "type": "integer"
+    },
+    "request_result": {
+      "type": "string"
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "Hamwi": {
+          "type": "number"
+        },
+        "Devine": {
+          "type": "number"
+        },
+        "Miller": {
+          "type": "number"
+        },
+        "Robinson": {
+          "type": "number"
+        }
+      },
+      "required": ["Hamwi", "Devine", "Miller", "Robinson"]
+    }
+  },
+  "required": ["status_code", "request_result", "data"]
+}

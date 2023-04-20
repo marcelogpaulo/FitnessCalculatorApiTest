@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "status_code": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "request_result": {
+      "type": "string",
+      "enum": ["Successful", "Failed"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "Hamwi": {
+          "type": "number",
+          "minimum": 0
+        },
+        "Devine": {
+          "type": "number",
+          "minimum": 0
+        },
+        "Miller": {
+          "type": "number",
+          "minimum": 0
+        },
+        "Robinson": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": ["Hamwi", "Devine", "Miller", "Robinson"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["status_code", "request_result", "data"],
+  "additionalProperties": false
+}

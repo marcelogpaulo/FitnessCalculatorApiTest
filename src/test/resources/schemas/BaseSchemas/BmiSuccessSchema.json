@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "status_code": {
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
+    },
+    "request_result": {
+      "type": "string",
+      "enum": ["Successful", "Failed"]
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "bmi": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "health": {
+          "type": "string"
+        },
+        "healthy_bmi_range": {
+          "type": "string"
+        }
+      },
+      "required": ["bmi", "health", "healthy_bmi_range"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["status_code", "request_result", "data"],
+  "additionalProperties": false
+}

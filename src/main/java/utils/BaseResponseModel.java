@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 import java.util.Map;
 
-public class IdealWeightResponseModel {
+public class BaseResponseModel {
 
     @JsonProperty("IdealWeightResponseModel")
-    public IdealWeightResponseModel IdealWeightResponseModel;
+    public BaseResponseModel BaseResponseModel;
 
     @JsonProperty("status_code")
     public int status_code;

@@ -8,7 +8,7 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
         tags = "@Calculator",
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        features = "src/tests/resources/features/Calculators.feature",
+        features = "src/tests/resources/features/CalculatorsIdealWeight.feature",
         glue = {"steps"}
 )
 

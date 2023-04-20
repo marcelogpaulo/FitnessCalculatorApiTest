@@ -1,14 +1,12 @@
 package steps;
 
 import constants.Constants;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.When;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import utils.BaseResponseModel;
 
 import static io.restassured.RestAssured.given;
-import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 public class BmiSteps implements Constants {
 
@@ -28,7 +26,7 @@ public class BmiSteps implements Constants {
 
     public BaseResponseModel baseResponseModel;
 
-    @When("I send a GET request using {int}, {int} and {int}")
+    @When("I send a GET request using age {int}, weight {int} and height {int}")
     public void i_send_a_get_request(int ageCucumber, int weightCucumber, int heightCucumber) throws Exception {
         age = ageCucumber;
         weight = weightCucumber;
@@ -77,7 +75,7 @@ public class BmiSteps implements Constants {
 //        getStatusCodeAndResponseBodyAsString();
 //        validateResponseNotNull();
 //        validateResponseBodyElementsAreNotNull();
-        commonSteps.saveResponseFromAnotherClass(response);
+        commonSteps.saveResponseInCommonStepsClass(response);
 //        returnResponseBodyAsObject();
 //        validateRequestResult();
 //        validateRequestErrors();

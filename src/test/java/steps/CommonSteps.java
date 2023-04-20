@@ -1,15 +1,25 @@
 package steps;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import constants.Constants;
+import constants.RequestParameter;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.specification.RequestSpecification;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
+import utils.BaseResponseModel;
 
+import java.util.Map;
 import java.util.Objects;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 public class CommonSteps implements Constants {
@@ -17,15 +27,61 @@ public class CommonSteps implements Constants {
     public static Response lastResponse;
     public static int lastStatusCode;
 
-    //TODO - validar se tem como usar o mesmo step para varias classes diferentes, porque dependente, vai mudar o response e o statusCode
+//    Instead of hard-coding the path of the schema for each endpoint, you can store all the paths in a map and retrieve them based on the endpoint.
+//    This will make the code more modular and easier to maintain.
+    public static Map<String, String> endpointSchemas = Map.of(
+            "/idealweight", "schemas/BaseSchemas/IdealWeightSuccessSchema.json",
+            "/bmi", "schemas/BaseSchemas/BmiSuccessSchema.json",
+            "/dailycalorie", "schemas/BaseSchemas/DailyCalorieSuccessSchema.json",
+            "/burnedcalorie", "schemas/BaseSchemas/BurnedCaloriesSuccessSchema.json",
+            "/macrocalculator?", "schemas/BaseSchemas/MacrosCalculatorSuccessSchema.json"
+    );
+
+    public static String schemaPath;
+    public static RequestSpecification requestHeadersAndOnlyOneParameter;
+    public static RequestSpecification requestHeadersWithoutParameters;
+    public static RequestSpecification requestHeaderWithoutApiKey;
+    public BaseResponseModel baseResponseModel;
 
     @Given("I have the API endpoint {string}")
-    public void i_have_the_api_endpoint(String endpoint) throws Exception {
-        if (endpoint.equals("/idealweight") || endpoint.equals("/macrocalculator") || endpoint.equals("/bmi") || endpoint.equals("/burnedcalorie") || endpoint.equals("/dailycalorie")) {
-            System.out.println("Endpoint is valid: " + endpoint);
-        } else throw new Exception("Endpoint is not valid: " + endpoint);
-
+    public void i_have_the_api_endpoint(String endpoint) {
+        choseRightSchemaPath(endpoint);
+        validateEndpoint(endpoint);
         RestAssured.baseURI = URL + endpoint;
+    }
+
+    @When("I send a GET request using only the parameter {string} and the value {string}")
+    public void iSendAGETRequestUsingOnlyTheGenderParameter(String firstParameter, String value) throws Exception {
+        requestHeadersAndOnlyOneParameter = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST).queryParams(firstParameter, value);
+        getRequestBuilder(RequestParameter.FIRST_PARAMETER_ONLY);
+        saveStatusCodeInCommonStepsClass();
+        validateResponseNotNull();
+        validateResponseBodyElementsAreNotNull();
+        getResponseBodyAsObject();
+        validateRequestResult();
+        //TODO ValidateRequestErrors
+    }
+
+    @When("I send a GET request using no parameter")
+    public void iSendAGETRequestUsingNoParameters() throws Exception {
+        requestHeadersWithoutParameters = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST);
+        getRequestBuilder(RequestParameter.NO_PARAMETERS);
+        saveStatusCodeInCommonStepsClass();
+        validateResponseNotNull();
+        validateResponseBodyElementsAreNotNull();
+        getResponseBodyAsObject();
+        validateRequestResult();
+    }
+
+    @When("I send a GET request without the API_KEY")
+    public void iSendAGETRequestWithoutApiKey() throws Exception {
+        requestHeaderWithoutApiKey = given().headers( "X-RapidAPI-Host", API_HOST);
+        getRequestBuilder(RequestParameter.NO_API_KEY);
+        saveStatusCodeInCommonStepsClass();
+        validateResponseNotNull();
+        validateResponseBodyElementsAreNotNull();
+        getResponseBodyAsObject();
+        validateRequestResult();
     }
 
     @Then("the response should have status code {int}")
@@ -35,10 +91,34 @@ public class CommonSteps implements Constants {
         lastResponse.then().statusCode(code);
     }
 
-    @And("base_schema for the response is correct")
-    public void validateSchema() {
-        switch (lastStatusCode) {
-            case 200 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseSuccessSchema.json"));
+    @And("schema is correct for the endpoint {string}")
+    public void validateSchemaCucumberStep(String endpoint) {
+        choseRightSchemaPath(endpoint);
+        handleSchemaBasedOnStatusCode(lastStatusCode);
+    }
+
+    public void validateEndpoint(String endpoint) {
+        if (schemaPath == null) {
+            throw new IllegalArgumentException("Invalid endpoint: " + endpoint);
+        }
+    }
+
+    public void choseRightSchemaPath(String endpoint) {
+        schemaPath = endpointSchemas.get(endpoint);
+    }
+
+    public void getRequestBuilder(RequestParameter parameter) throws Exception {
+        switch (parameter) {
+            case FIRST_PARAMETER_ONLY -> lastResponse = requestHeadersAndOnlyOneParameter.get();
+            case NO_PARAMETERS -> lastResponse = requestHeadersWithoutParameters.get();
+            case NO_API_KEY -> lastResponse = requestHeaderWithoutApiKey.get();
+            default -> throw new Exception("Option not valid: " + parameter);
+        }
+    }
+
+    public void handleSchemaBasedOnStatusCode(int statusCode) {
+        switch (statusCode) {
+            case 200 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(schemaPath));
             case 422 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseWrongParameterSchema.json"));
             case 400 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseBadRequestSchema.json"));
             case 401 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseUnauthorizedSchema.json"));
@@ -47,13 +127,49 @@ public class CommonSteps implements Constants {
         System.out.println("Schema successfully validated");
     }
 
-    public void saveResponseFromAnotherClass(Response response) {
+    public void saveResponseInCommonStepsClass(Response response) {
         lastResponse = response;
+    }
+
+    public void saveStatusCodeInCommonStepsClass() {
         lastStatusCode = lastResponse.getStatusCode();
     }
 
     public void validateResponseNotNull() {
         Assertions.assertTrue(Objects.nonNull(lastResponse));
+    }
+
+    public void getResponseBodyAsObject() throws JsonProcessingException {
+        String responseString = lastResponse.asString();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        baseResponseModel = mapper.readValue(responseString, BaseResponseModel.class);
+    }
+
+    public void validateRequestResult() {
+        switch (lastStatusCode) {
+            case 200 -> Assert.assertEquals("request_result_200", "Successful", baseResponseModel.request_result);
+            case 422 -> Assert.assertEquals("request_result_422", "Unprocessable Entity", baseResponseModel.request_result);
+            case 400 -> Assert.assertEquals("request_result_400", "Bad Request", baseResponseModel.request_result);
+            case 401 -> Assert.assertEquals("request_result_401", "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.", baseResponseModel.message);
+        }
+    }
+
+    public void validateResponseBodyElementsAreNotNull() {
+        if (lastStatusCode == 200 || lastStatusCode == 422 || lastStatusCode == 400) {
+            Assertions.assertNotNull(lastResponse.jsonPath().getString("status_code"), "status_code is null.");
+            Assertions.assertNotNull(lastResponse.jsonPath().getString("request_result"), "request_result is null.");
+
+            if (lastStatusCode == 200) {
+                Assertions.assertNotNull(lastResponse.jsonPath().getString("data"), "data is null.");
+            }
+            else if (lastStatusCode == 422) {
+                Assertions.assertNotNull(lastResponse.jsonPath().getString("errors"), "errors is null.");
+            }
+        }
+        else {
+            Assertions.assertNotNull(lastResponse.jsonPath().getString("message"), "message is null.");
+        }
     }
 
 }

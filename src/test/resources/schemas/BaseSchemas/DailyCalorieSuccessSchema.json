@@ -1,0 +1,110 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "status_code": {
+      "type": "integer",
+      "description": "The HTTP status code of the response."
+    },
+    "request_result": {
+      "type": "string",
+      "description": "The result of the request."
+    },
+    "data": {
+      "type": "object",
+      "properties": {
+        "BMR": {
+          "type": "number",
+          "description": "The Basal Metabolic Rate value in calories."
+        },
+        "goals": {
+          "type": "object",
+          "properties": {
+            "maintain weight": {
+              "type": "number",
+              "description": "The daily caloric requirement to maintain weight."
+            },
+            "Mild weight loss": {
+              "type": "object",
+              "properties": {
+                "loss weight": {
+                  "type": "string",
+                  "description": "The weight loss goal."
+                },
+                "calory": {
+                  "type": "number",
+                  "description": "The daily caloric requirement to achieve the mild weight loss goal."
+                }
+              }
+            },
+            "Weight loss": {
+              "type": "object",
+              "properties": {
+                "loss weight": {
+                  "type": "string",
+                  "description": "The weight loss goal."
+                },
+                "calory": {
+                  "type": "number",
+                  "description": "The daily caloric requirement to achieve the weight loss goal."
+                }
+              }
+            },
+            "Extreme weight loss": {
+              "type": "object",
+              "properties": {
+                "loss weight": {
+                  "type": "string",
+                  "description": "The weight loss goal."
+                },
+                "calory": {
+                  "type": "number",
+                  "description": "The daily caloric requirement to achieve the extreme weight loss goal."
+                }
+              }
+            },
+            "Mild weight gain": {
+              "type": "object",
+              "properties": {
+                "gain weight": {
+                  "type": "string",
+                  "description": "The weight gain goal."
+                },
+                "calory": {
+                  "type": "number",
+                  "description": "The daily caloric requirement to achieve the mild weight gain goal."
+                }
+              }
+            },
+            "Weight gain": {
+              "type": "object",
+              "properties": {
+                "gain weight": {
+                  "type": "string",
+                  "description": "The weight gain goal."
+                },
+                "calory": {
+                  "type": "number",
+                  "description": "The daily caloric requirement to achieve the weight gain goal."
+                }
+              }
+            },
+            "Extreme weight gain": {
+              "type": "object",
+              "properties": {
+                "gain weight": {
+                  "type": "string",
+                  "description": "The weight gain goal."
+                },
+                "calory": {
+                  "type": "number",
+                  "description": "The daily caloric requirement to achieve the extreme weight gain goal."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

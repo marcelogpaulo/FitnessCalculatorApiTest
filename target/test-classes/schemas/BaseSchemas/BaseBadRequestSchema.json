@@ -1,12 +1,16 @@
 {
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
     "status_code": {
-      "type": "integer"
+      "type": "integer",
+      "minimum": 100,
+      "maximum": 599
     },
     "request_result": {
       "type": "string"
     }
   },
-  "required": ["status_code", "request_result"]
+  "required": ["status_code", "request_result"],
+  "additionalProperties": false
 }

@@ -34,7 +34,7 @@ public class IdealWeightStep implements Constants {
         getStatusCode();
         getResponseBodyAsString();
         commonSteps.validateResponseNotNull();
-        validateResponseBodyElementsAreNotNull();
+        commonSteps.validateResponseBodyElementsAreNotNull();
         commonSteps.getResponseBodyAsObject();
         commonSteps.validateRequestResult();
         validateRequestErrors();
@@ -45,27 +45,6 @@ public class IdealWeightStep implements Constants {
             response = requestHeadersAndAllParameters.get();
         } else {
             throw new Exception("Option not valid: " + parameter);
-        }
-    }
-
-    public void validateResponseBodyElementsAreNotNull() {
-        if (statusCode == 200 || statusCode == 422 || statusCode == 400) {
-            Assertions.assertNotNull(response.jsonPath().getString("status_code"), "status_code is null.");
-            Assertions.assertNotNull(response.jsonPath().getString("request_result"), "request_result is null.");
-
-            if (statusCode == 200) {
-                Assertions.assertNotNull(response.jsonPath().getString("data"), "data is null.");
-                Assertions.assertNotNull(response.jsonPath().getString("data.Hamwi"), "Hamwi is null.");
-                Assertions.assertNotNull(response.jsonPath().getString("data.Devine"), "Devine is null.");
-                Assertions.assertNotNull(response.jsonPath().getString("data.Miller"), "Miller is null.");
-                Assertions.assertNotNull(response.jsonPath().getString("data.Robinson"), "Robinson is null.");
-            }
-            else if (statusCode == 422) {
-                Assertions.assertNotNull(response.jsonPath().getString("errors"), "errors is null.");
-            }
-        }
-        else {
-            Assertions.assertNotNull(response.jsonPath().getString("message"), "message is null.");
         }
     }
 

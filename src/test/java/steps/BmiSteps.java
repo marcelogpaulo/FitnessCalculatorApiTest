@@ -32,7 +32,7 @@ public class BmiSteps implements Constants {
         weight = weightCucumber;
         height = heightCucumber;
         requestHeadersAndAllParameters = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST).queryParams("age", age, "weight", weight, "height", height);
-        getRequestBuilder(ALL_PARAMETERS);
+//        getRequestBuilder(ALL_PARAMETERS);
     }
 //
 //    @When("I send a GET request using only the gender parameter")

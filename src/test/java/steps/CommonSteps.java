@@ -38,6 +38,7 @@ public class CommonSteps implements Constants {
     );
 
     public static String schemaPath;
+    public static String endpointCucumber;
     public static RequestSpecification requestHeadersAndOnlyOneParameter;
     public static RequestSpecification requestHeadersWithoutParameters;
     public static RequestSpecification requestHeaderWithoutApiKey;
@@ -101,6 +102,7 @@ public class CommonSteps implements Constants {
         if (schemaPath == null) {
             throw new IllegalArgumentException("Invalid endpoint: " + endpoint);
         }
+        endpointCucumber = endpoint;
     }
 
     public void choseRightSchemaPath(String endpoint) {
@@ -155,13 +157,84 @@ public class CommonSteps implements Constants {
         }
     }
 
-    public void validateResponseBodyElementsAreNotNull() {
+    public void validateResponseBodyElementsAreNotNull() throws Exception {
         if (lastStatusCode == 200 || lastStatusCode == 422 || lastStatusCode == 400) {
             Assertions.assertNotNull(lastResponse.jsonPath().getString("status_code"), "status_code is null.");
             Assertions.assertNotNull(lastResponse.jsonPath().getString("request_result"), "request_result is null.");
 
             if (lastStatusCode == 200) {
                 Assertions.assertNotNull(lastResponse.jsonPath().getString("data"), "data is null.");
+
+                switch (endpointCucumber) {
+                    case IDEAL_WEIGHT_ENDPOINT -> {
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.Hamwi"), "data.Hamwi is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.Devine"), "data.Devine is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.Miller"), "data.Miller is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.Robinson"), "data.Robinson is null.");
+                    }
+                    case BMI_ENDPOINT -> {
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.bmi"), "data.bmi is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.health"), "data.health is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.healthy_bmi_range"), "data.healthy_bmi_range is null.");
+                    }
+                    case BURNED_CALORIE_ENDPOINT -> {
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.burnedCalorie"), "data.burnedCalorie is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.unit"), "data.unit is null.");
+                    }
+                    case DAILY_CALORIE_ENDPOINT -> {
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.BMR"), "data.BMR is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals"), "data.goals is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.maintain weight"), "data.goals.maintain weight is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Mild weight loss"), "data.goals.Mild weight loss is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Mild weight loss.loss weight"), "data.goals.Mild weight loss.loss weight is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Mild weight loss.calory"), "data.goals.Mild weight loss.calory is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Weight loss"), "data.goals.Weight loss is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Weight loss.loss weight"), "data.goals.Weight loss.loss weight is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Weight loss.calory"), "data.goals.Weight loss.calory is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Extreme weight loss"), "data.goals.Extreme weight loss is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Extreme weight loss.loss weight"), "data.goals.Extreme weight loss.loss weight is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Extreme weight loss.calory"), "data.goals.Extreme weight loss.calory is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Mild weight gain"), "data.goals.Mild weight gain is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Mild weight gain.gain weight"), "data.goals.Mild weight gain.gain weight is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Mild weight gain.calory"), "data.goals.Mild weight gain.calory is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Weight gain"), "data.goals.Weight gain is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Weight gain.gain weight"), "data.goals.Weight gain.gain weight is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Weight gain.calory"), "data.goals.Weight gain.calory is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Extreme weight gain"), "data.goals.Extreme weight gain is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Extreme weight gain.gain weight"), "data.goals.Extreme weight gain.gain weight is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.goals.Extreme weight gain.calory"), "data.goals.Extreme weight gain.calory is null.");
+                    }
+                    case MACROS_CALCULATOR_ENDPOINT -> {
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.calorie"), "data.calorie is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.balanced"), "data.balanced is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.balanced.protein"), "data.balanced.protein is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.balanced.fat"), "data.balanced.fat is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.balanced.carbs"), "data.balanced.carbs is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowfat"), "data.lowfat is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowfat.protein"), "data.lowfat.protein is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowfat.fat"), "data.lowfat.fat is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowfat.carbs"), "data.lowfat.carbs is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowcarbs"), "data.lowcarbs is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowcarbs.protein"), "data.lowcarbs.protein is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowcarbs.fat"), "data.lowcarbs.fat is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.lowcarbs.carbs"), "data.lowcarbs.carbs is null.");
+
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.highprotein"), "data.highprotein is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.highprotein.protein"), "data.highprotein.protein is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.highprotein.fat"), "data.highprotein.fat is null.");
+                        Assertions.assertNotNull(lastResponse.jsonPath().getString("data.highprotein.carbs"), "data.highprotein.carbs is null.");
+                    }
+                    default -> throw new Exception("Option not valid: " + endpointCucumber);
+                }
             }
             else if (lastStatusCode == 422) {
                 Assertions.assertNotNull(lastResponse.jsonPath().getString("errors"), "errors is null.");

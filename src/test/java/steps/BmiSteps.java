@@ -31,7 +31,7 @@ public class BmiSteps implements Constants {
         age = ageCucumber;
         weight = weightCucumber;
         height = heightCucumber;
-        requestHeadersAndAllParameters = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST).queryParams("age", age, "weight", weight, "height", height);
+        requestHeadersAndAllParameters = given().headers(API_KEY_VALUE, API_KEY_KEY, API_HOST_VALUE, API_HOST_KEY).queryParams("age", age, "weight", weight, "height", height);
 //        getRequestBuilder(ALL_PARAMETERS);
     }
 //
@@ -48,19 +48,6 @@ public class BmiSteps implements Constants {
 //        requestHeadersAndOnlyHeightParameter = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST).queryParams("height", height);
 //        getRequestBuilder(HEIGHT_PARAMETER);
 //    }
-//
-//    @When("I send a GET request using no parameter")
-//    public void iSendAGETRequestUsingNoParameters() throws Exception {
-//        requestHeadersWithoutParameters = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST);
-//        getRequestBuilder(NONE_PARAMETERS);
-//    }
-//
-//    @When("I send a GET request without the API_KEY")
-//    public void iSendAGETRequestWithoutApiKey() throws Exception {
-//        requestHeaderWithoutApiKey = given().headers( "X-RapidAPI-Host", API_HOST);
-//        getRequestBuilder(NO_API_KEY);
-//    }
-//
 
     public void getRequestBuilder(String parameter) throws Exception {
         switch (parameter) {
@@ -81,31 +68,6 @@ public class BmiSteps implements Constants {
 //        validateRequestErrors();
     }
 //
-//    public void validateResponseNotNull() {
-//        Assertions.assertTrue(Objects.nonNull(response));
-//    }
-//
-//    public void validateResponseBodyElementsAreNotNull() {
-//        if (statusCode == 200 || statusCode == 422 || statusCode == 400) {
-//            Assertions.assertNotNull(response.jsonPath().getString("status_code"), "status_code is null.");
-//            Assertions.assertNotNull(response.jsonPath().getString("request_result"), "request_result is null.");
-//
-//            if (statusCode == 200) {
-//                Assertions.assertNotNull(response.jsonPath().getString("data"), "data is null.");
-//                Assertions.assertNotNull(response.jsonPath().getString("data.Hamwi"), "Hamwi is null.");
-//                Assertions.assertNotNull(response.jsonPath().getString("data.Devine"), "Devine is null.");
-//                Assertions.assertNotNull(response.jsonPath().getString("data.Miller"), "Miller is null.");
-//                Assertions.assertNotNull(response.jsonPath().getString("data.Robinson"), "Robinson is null.");
-//            }
-//            else if (statusCode == 422) {
-//                Assertions.assertNotNull(response.jsonPath().getString("errors"), "errors is null.");
-//            }
-//        }
-//        else {
-//            Assertions.assertNotNull(response.jsonPath().getString("message"), "message is null.");
-//        }
-//    }
-//
 //    public void getStatusCodeAndResponseBodyAsString() {
 //        statusCode = response.getStatusCode();
 //        responseBody = response.getBody().asString();
@@ -116,15 +78,6 @@ public class BmiSteps implements Constants {
 //        ObjectMapper mapper = new ObjectMapper();
 //        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 //        idealWeightResponseModel = mapper.readValue(responseString, IdealWeightResponseModel.class);
-//    }
-//
-//    public void validateRequestResult() {
-//        switch (statusCode) {
-//            case 200 -> Assert.assertEquals("request_result_200", "Successful", idealWeightResponseModel.request_result);
-//            case 422 -> Assert.assertEquals("request_result_422", "Unprocessable Entity", idealWeightResponseModel.request_result);
-//            case 400 -> Assert.assertEquals("request_result_400", "Bad Request", idealWeightResponseModel.request_result);
-//            case 401 -> Assert.assertEquals("request_result_401", "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.", idealWeightResponseModel.message);
-//        }
 //    }
 //
 //    public void validateRequestErrors() {

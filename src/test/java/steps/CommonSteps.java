@@ -24,6 +24,12 @@ import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInC
 
 public class CommonSteps implements Constants {
 
+    //TODO when i provide this class and ask for suggestions
+    //TODO Add more descriptive error messages: When throwing an exception or failing an assertion, it's a good practice to provide a more descriptive error message. This will make it easier to diagnose the issue when the test fails.
+    //TODO Consider using an assertion library: The code currently uses JUnit assertions, but you might consider using a more comprehensive assertion library like AssertJ or Hamcrest. These libraries provide a wide range of assertion methods that can make your tests more expressive and easier to read.
+    //TODO Add logging: Adding logging statements throughout the code can help with debugging when tests fail. You could add log statements at key points in the code to output information such as the request and response headers, the request URL, and the response body. This will help you quickly identify issues when tests fail.
+    //TODO validar como fazer teste de performance
+
     public static Response lastResponse;
     public static int lastStatusCode;
 
@@ -53,7 +59,7 @@ public class CommonSteps implements Constants {
 
     @When("I send a GET request using only the parameter {string} and the value {string}")
     public void iSendAGETRequestUsingOnlyTheGenderParameter(String firstParameter, String value) throws Exception {
-        requestHeadersAndOnlyOneParameter = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST).queryParams(firstParameter, value);
+        requestHeadersAndOnlyOneParameter = given().headers(API_KEY_VALUE, API_KEY_KEY, API_HOST_VALUE, API_HOST_KEY).queryParams(firstParameter, value);
         getRequestBuilder(RequestParameter.FIRST_PARAMETER_ONLY);
         saveStatusCodeInCommonStepsClass();
         validateResponseNotNull();
@@ -65,7 +71,7 @@ public class CommonSteps implements Constants {
 
     @When("I send a GET request using no parameter")
     public void iSendAGETRequestUsingNoParameters() throws Exception {
-        requestHeadersWithoutParameters = given().headers("X-RapidAPI-Key", API_KEY, "X-RapidAPI-Host", API_HOST);
+        requestHeadersWithoutParameters = given().headers(API_KEY_KEY, API_KEY_KEY, API_HOST_VALUE, API_HOST_KEY);
         getRequestBuilder(RequestParameter.NO_PARAMETERS);
         saveStatusCodeInCommonStepsClass();
         validateResponseNotNull();
@@ -76,7 +82,7 @@ public class CommonSteps implements Constants {
 
     @When("I send a GET request without the API_KEY")
     public void iSendAGETRequestWithoutApiKey() throws Exception {
-        requestHeaderWithoutApiKey = given().headers( "X-RapidAPI-Host", API_HOST);
+        requestHeaderWithoutApiKey = given().headers( API_HOST_VALUE, API_HOST_KEY);
         getRequestBuilder(RequestParameter.NO_API_KEY);
         saveStatusCodeInCommonStepsClass();
         validateResponseNotNull();
@@ -93,7 +99,7 @@ public class CommonSteps implements Constants {
     }
 
     @And("schema is correct for the endpoint {string}")
-    public void validateSchemaCucumberStep(String endpoint) {
+    public void validateSchemaCucumberStep(String endpoint) throws Exception {
         choseRightSchemaPath(endpoint);
         handleSchemaBasedOnStatusCode(lastStatusCode);
     }
@@ -118,12 +124,13 @@ public class CommonSteps implements Constants {
         }
     }
 
-    public void handleSchemaBasedOnStatusCode(int statusCode) {
+    public void handleSchemaBasedOnStatusCode(int statusCode) throws Exception {
         switch (statusCode) {
             case 200 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(schemaPath));
-            case 422 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseWrongParameterSchema.json"));
-            case 400 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseBadRequestSchema.json"));
-            case 401 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath("schemas/BaseSchemas/BaseUnauthorizedSchema.json"));
+            case 422 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(SCHEMA_PATH_WRONG_PARAMETER));
+            case 400 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(SCHEMA_PATH_BAD_REQUEST));
+            case 401 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(SCHEMA_PATH_UNAUTHORIZED));
+            default -> throw new Exception("StatusCode not mapped: " + statusCode);
         }
 
         System.out.println("Schema successfully validated");
@@ -150,10 +157,10 @@ public class CommonSteps implements Constants {
 
     public void validateRequestResult() {
         switch (lastStatusCode) {
-            case 200 -> Assert.assertEquals("request_result_200", "Successful", baseResponseModel.request_result);
-            case 422 -> Assert.assertEquals("request_result_422", "Unprocessable Entity", baseResponseModel.request_result);
-            case 400 -> Assert.assertEquals("request_result_400", "Bad Request", baseResponseModel.request_result);
-            case 401 -> Assert.assertEquals("request_result_401", "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info.", baseResponseModel.message);
+            case 200 -> Assert.assertEquals("request_result_200", REQUEST_RESULT_200, baseResponseModel.request_result);
+            case 422 -> Assert.assertEquals("request_result_422", REQUEST_RESULT_422, baseResponseModel.request_result);
+            case 400 -> Assert.assertEquals("request_result_400", REQUEST_RESULT_400, baseResponseModel.request_result);
+            case 401 -> Assert.assertEquals("request_result_401", REQUEST_RESULT_401, baseResponseModel.message);
         }
     }
 

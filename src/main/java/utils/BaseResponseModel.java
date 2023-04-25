@@ -17,7 +17,7 @@ public class BaseResponseModel {
     public String request_result;
 
     @JsonProperty("data")
-    public Map<String, Double> data;
+    public Map<String, Object> data;
 
     @JsonProperty("errors")
     public List<String> errors;

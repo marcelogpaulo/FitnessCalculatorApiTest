@@ -26,7 +26,7 @@ public class IdealWeightStep implements Constants {
     public void i_send_a_get_request(String genderCucumber, int heightCucumber) throws Exception {
         gender = genderCucumber;
         height = heightCucumber;
-        requestHeadersAndAllParameters = given().headers(API_KEY_VALUE, API_KEY_KEY, API_HOST_VALUE, API_HOST_KEY).queryParams("gender", gender, "height", height);
+        requestHeadersAndAllParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams("gender", gender, "height", height);
         getRequestBuilder(RequestParameter.ALL_PARAMETERS);
         commonSteps.saveResponseInCommonStepsClass(response);
         commonSteps.saveStatusCodeInCommonStepsClass();

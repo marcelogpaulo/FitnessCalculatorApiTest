@@ -48,6 +48,7 @@ public class CommonSteps implements Constants {
     public static RequestSpecification requestHeadersAndOnlyOneParameter;
     public static RequestSpecification requestHeadersWithoutParameters;
     public static RequestSpecification requestHeaderWithoutApiKey;
+    public static RequestSpecification requestHeadersAndAllParameters;
     public BaseResponseModel baseResponseModel;
 
     @Given("I have the API endpoint {string}")
@@ -57,9 +58,20 @@ public class CommonSteps implements Constants {
         RestAssured.baseURI = URL + endpoint;
     }
 
+    @When("I send a GET request with all parameters")
+    public void sendGetRequest() throws Exception {
+        getRequestSpecification();
+        getRequestBuilder();
+        saveStatusCodeInCommonStepsClass();
+        validateResponseNotNull();
+        validateResponseBodyElementsAreNotNull();
+        getResponseBodyAsObject();
+        validateRequestResult();
+    }
+
     @When("I send a GET request using only the parameter {string} and the value {string}")
     public void iSendAGETRequestUsingOnlyTheGenderParameter(String firstParameter, String value) throws Exception {
-        requestHeadersAndOnlyOneParameter = given().headers(API_KEY_VALUE, API_KEY_KEY, API_HOST_VALUE, API_HOST_KEY).queryParams(firstParameter, value);
+        requestHeadersAndOnlyOneParameter = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams(firstParameter, value);
         getRequestBuilder(RequestParameter.FIRST_PARAMETER_ONLY);
         saveStatusCodeInCommonStepsClass();
         validateResponseNotNull();
@@ -71,7 +83,7 @@ public class CommonSteps implements Constants {
 
     @When("I send a GET request using no parameter")
     public void iSendAGETRequestUsingNoParameters() throws Exception {
-        requestHeadersWithoutParameters = given().headers(API_KEY_KEY, API_KEY_KEY, API_HOST_VALUE, API_HOST_KEY);
+        requestHeadersWithoutParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE);
         getRequestBuilder(RequestParameter.NO_PARAMETERS);
         saveStatusCodeInCommonStepsClass();
         validateResponseNotNull();
@@ -82,7 +94,7 @@ public class CommonSteps implements Constants {
 
     @When("I send a GET request without the API_KEY")
     public void iSendAGETRequestWithoutApiKey() throws Exception {
-        requestHeaderWithoutApiKey = given().headers( API_HOST_VALUE, API_HOST_KEY);
+        requestHeaderWithoutApiKey = given().headers( API_HOST_KEY, API_HOST_VALUE);
         getRequestBuilder(RequestParameter.NO_API_KEY);
         saveStatusCodeInCommonStepsClass();
         validateResponseNotNull();
@@ -98,9 +110,9 @@ public class CommonSteps implements Constants {
         lastResponse.then().statusCode(code);
     }
 
-    @And("schema is correct for the endpoint {string}")
-    public void validateSchemaCucumberStep(String endpoint) throws Exception {
-        choseRightSchemaPath(endpoint);
+    @And("schema is correct")
+    public void validateSchemaCucumberStep() throws Exception {
+        choseRightSchemaPath(endpointCucumber);
         handleSchemaBasedOnStatusCode(lastStatusCode);
     }
 
@@ -120,7 +132,29 @@ public class CommonSteps implements Constants {
             case FIRST_PARAMETER_ONLY -> lastResponse = requestHeadersAndOnlyOneParameter.get();
             case NO_PARAMETERS -> lastResponse = requestHeadersWithoutParameters.get();
             case NO_API_KEY -> lastResponse = requestHeaderWithoutApiKey.get();
-            default -> throw new Exception("Option not valid: " + parameter);
+            default -> throw new Exception("Option for Parameter is not valid: " + parameter);
+        }
+    }
+
+    public void getRequestBuilder() throws Exception {
+        switch (endpointCucumber) {
+            case IDEAL_WEIGHT_ENDPOINT
+                , BMI_ENDPOINT
+                , MACROS_CALCULATOR_ENDPOINT
+                , BURNED_CALORIE_ENDPOINT
+                , DAILY_CALORIE_ENDPOINT -> lastResponse = requestHeadersAndAllParameters.get();
+            default -> throw new Exception("Endpoint is not valid: " + endpointCucumber);
+        }
+    }
+
+    public void getRequestSpecification() throws Exception {
+        switch (endpointCucumber) {
+            case IDEAL_WEIGHT_ENDPOINT -> requestHeadersAndAllParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams(PARAMETER_GENDER, PARAMETER_GENDER_DEFAULT_VALUE, PARAMETER_HEIGHT, PARAMETER_HEIGHT_DEFAULT_VALUE);
+            case BMI_ENDPOINT -> requestHeadersAndAllParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams(PARAMETER_AGE, PARAMETER_AGE_DEFAULT_VALUE, PARAMETER_WEIGHT, PARAMETER_WEIGHT_DEFAULT_VALUE, PARAMETER_HEIGHT, PARAMETER_HEIGHT_DEFAULT_VALUE);
+            case MACROS_CALCULATOR_ENDPOINT -> requestHeadersAndAllParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams(PARAMETER_AGE, PARAMETER_AGE_DEFAULT_VALUE, PARAMETER_GENDER, PARAMETER_GENDER_DEFAULT_VALUE, PARAMETER_HEIGHT, PARAMETER_HEIGHT_DEFAULT_VALUE, PARAMETER_WEIGHT, PARAMETER_WEIGHT_DEFAULT_VALUE, PARAMETER_ACTIVITY_LEVEL, PARAMETER_ACTIVITY_LEVEL_DEFAULT_VALUE);
+            case BURNED_CALORIE_ENDPOINT -> requestHeadersAndAllParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams(PARAMETER_ACTIVITY_ID, PARAMETER_ACTIVITY_ID_DEFAULT_VALUE, PARAMETER_ACTIVITY_MIN, PARAMETER_ACTIVITY_MIN_DEFAULT_VALUE, PARAMETER_WEIGHT, PARAMETER_WEIGHT_DEFAULT_VALUE);
+            case DAILY_CALORIE_ENDPOINT -> requestHeadersAndAllParameters = given().headers(API_KEY_KEY, API_KEY_VALUE, API_HOST_KEY, API_HOST_VALUE).queryParams(PARAMETER_AGE, PARAMETER_AGE_DEFAULT_VALUE, PARAMETER_GENDER, PARAMETER_GENDER_DEFAULT_VALUE, PARAMETER_HEIGHT, PARAMETER_HEIGHT_DEFAULT_VALUE, PARAMETER_WEIGHT, PARAMETER_WEIGHT_DEFAULT_VALUE, PARAMETER_ACTIVITY_LEVEL, PARAMETER_ACTIVITY_LEVEL_DEFAULT_VALUE, PARAMETER_GOAL, PARAMETER_GOAL_DEFAULT_VALUE);
+            default -> throw new Exception("Endpoint is not valid: " + endpointCucumber);
         }
     }
 
@@ -130,7 +164,7 @@ public class CommonSteps implements Constants {
             case 422 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(SCHEMA_PATH_WRONG_PARAMETER));
             case 400 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(SCHEMA_PATH_BAD_REQUEST));
             case 401 -> lastResponse.then().assertThat().body(matchesJsonSchemaInClasspath(SCHEMA_PATH_UNAUTHORIZED));
-            default -> throw new Exception("StatusCode not mapped: " + statusCode);
+            default -> throw new Exception("StatusCode not mapped yet: " + statusCode);
         }
 
         System.out.println("Schema successfully validated");
@@ -142,6 +176,7 @@ public class CommonSteps implements Constants {
 
     public void saveStatusCodeInCommonStepsClass() {
         lastStatusCode = lastResponse.getStatusCode();
+        System.out.println("Printing Status Code: " + lastStatusCode);
     }
 
     public void validateResponseNotNull() {
@@ -240,7 +275,7 @@ public class CommonSteps implements Constants {
                         Assertions.assertNotNull(lastResponse.jsonPath().getString("data.highprotein.fat"), "data.highprotein.fat is null.");
                         Assertions.assertNotNull(lastResponse.jsonPath().getString("data.highprotein.carbs"), "data.highprotein.carbs is null.");
                     }
-                    default -> throw new Exception("Option not valid: " + endpointCucumber);
+                    default -> throw new Exception("Endpoint not valid: " + endpointCucumber);
                 }
             }
             else if (lastStatusCode == 422) {

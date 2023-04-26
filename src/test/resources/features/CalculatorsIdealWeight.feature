@@ -1,32 +1,39 @@
 Feature: Validate responses from Calculators Collection - Ideal Weight API
 
-@CalculatorStatus200TESTE
+  @CalculatorStatus200
   Scenario: Validate status code 200 TESTE
     Given I have the API endpoint "/idealweight"
     When I send a GET request with all parameters
     Then the response should have status code 200
     And schema is correct
 
-  @ErrorStatus422
-  Scenario: Validate status code 422 when the height value overlaps
+  @CalculatorStatus422
+  Scenario: Validate status code 200 TESTE
     Given I have the API endpoint "/idealweight"
-    When I send a GET request using "female" and 231
+    When I send a GET request with wrong parameters
     Then the response should have status code 422
     And schema is correct
 
-  @ErrorStatus422
-  Scenario: Validate status code 422 when the gender is invalid
-    Given I have the API endpoint "/idealweight"
-    When I send a GET request using "man" and 180
-    Then the response should have status code 422
-    And schema is correct
+#  @ErrorStatus422
+#  Scenario: Validate status code 422 when the height value overlaps
+#    Given I have the API endpoint "/idealweight"
+#    When I send a GET request using "female" and 231
+#    Then the response should have status code 422
+#    And schema is correct
 
-  @ErrorStatus422
-  Scenario: Validate status code 422 when the gender and height are invalid
-    Given I have the API endpoint "/idealweight"
-    When I send a GET request using "man" and 231
-    Then the response should have status code 422
-    And schema is correct
+#  @ErrorStatus422
+#  Scenario: Validate status code 422 when the gender is invalid
+#    Given I have the API endpoint "/idealweight"
+#    When I send a GET request using "man" and 180
+#    Then the response should have status code 422
+#    And schema is correct
+
+#  @ErrorStatus422
+#  Scenario: Validate status code 422 when the gender and height are invalid
+#    Given I have the API endpoint "/idealweight"
+#    When I send a GET request using "man" and 231
+#    Then the response should have status code 422
+#    And schema is correct
 
   @ErrorStatus400
   Scenario: Validate status code 400 when sending only the gender parameter

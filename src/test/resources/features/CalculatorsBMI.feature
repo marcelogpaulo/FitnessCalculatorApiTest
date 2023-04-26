@@ -7,6 +7,13 @@ Feature: Validate responses from Calculators Collection - BMI API
     Then the response should have status code 200
     And schema is correct
 
+  @CalculatorStatus422
+  Scenario: Validate status code 422
+    Given I have the API endpoint "/bmi"
+    When I send a GET request with wrong parameters
+    Then the response should have status code 422
+    And schema is correct
+
   @ErrorStatus400
   Scenario: Validate status code 400 when sending no parameters
     Given I have the API endpoint "/bmi"

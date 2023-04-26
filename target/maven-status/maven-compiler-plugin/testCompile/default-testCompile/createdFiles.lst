@@ -1,0 +1,5 @@
+steps/IdealWeightSteps.class
+steps/CommonSteps.class
+steps/BmiSteps.class
+tests/AllFeaturesTests.class
+tests/IdealWeightTests.class

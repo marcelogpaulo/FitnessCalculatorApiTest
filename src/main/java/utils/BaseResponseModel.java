@@ -22,6 +22,9 @@ public class BaseResponseModel {
     @JsonProperty("errors")
     public List<String> errors;
 
+    @JsonProperty("error")
+    public String error;
+
     @JsonProperty("message")
     public String message;
 }

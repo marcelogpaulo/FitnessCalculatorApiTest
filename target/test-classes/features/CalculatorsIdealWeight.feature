@@ -1,14 +1,14 @@
 Feature: Validate responses from Calculators Collection - Ideal Weight API
 
   @CalculatorStatus200
-  Scenario: Validate status code 200 TESTE
+  Scenario: Validate status code 200
     Given I have the API endpoint "/idealweight"
     When I send a GET request with all parameters
     Then the response should have status code 200
     And schema is correct
 
   @CalculatorStatus422
-  Scenario: Validate status code 200 TESTE
+  Scenario: Validate status code 422
     Given I have the API endpoint "/idealweight"
     When I send a GET request with wrong parameters
     Then the response should have status code 422

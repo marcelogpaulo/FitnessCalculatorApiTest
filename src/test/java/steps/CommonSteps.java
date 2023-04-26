@@ -1,6 +1,7 @@
 package steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.util.Separators;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import constants.Constants;
@@ -152,7 +153,9 @@ public class CommonSteps implements Constants {
                         .headers(HeaderParams.getApiHostHeader())
 //                        .queryParams(GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, HEIGHT_DEFAULT_VALUE)
                         .queryParams(QueryParams.getGenderParams())
-                        .queryParams(QueryParams.getHeightParams());
+                        .queryParams(QueryParams.getHeightParams())
+                        .log().everything();
+
             }
             case BMI_ENDPOINT -> {
                 return requestHeadersAndAllParameters = given()
@@ -197,7 +200,8 @@ public class CommonSteps implements Constants {
                         .queryParams(QueryParams.getHeightParams())
                         .queryParams(QueryParams.getWeightParams())
                         .queryParams(QueryParams.getActivityLevelParams())
-                        .queryParams(QueryParams.getGoalParams());
+                        .queryParams(QueryParams.getGoalParams())
+                        .log().everything();
             }
             default -> throw new Exception("Endpoint is not valid: " + endpointCucumber);
         }
@@ -208,11 +212,12 @@ public class CommonSteps implements Constants {
         String[] headerValues = {API_KEY_VALUE, API_HOST_VALUE};
 
         Map<String, String[]> queryParamsMap = new HashMap<>();
-        queryParamsMap.put(IDEAL_WEIGHT_ENDPOINT, new String[] {GENDER_PARAMETER + "=" + GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER + "=" + HEIGHT_DEFAULT_VALUE});
-        queryParamsMap.put(BMI_ENDPOINT, new String[] {AGE_PARAMETER + "=" + AGE_DEFAULT_VALUE, WEIGHT_PARAMETER + "=" + WEIGHT_DEFAULT_VALUE, HEIGHT_PARAMETER + "=" + HEIGHT_DEFAULT_VALUE});
-        queryParamsMap.put(MACROS_CALCULATOR_ENDPOINT, new String[] {AGE_PARAMETER + "=" + AGE_DEFAULT_VALUE, GENDER_PARAMETER + "=" + GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER + "=" + HEIGHT_DEFAULT_VALUE, WEIGHT_PARAMETER + "=" + WEIGHT_DEFAULT_VALUE, ACTIVITY_LEVEL_PARAMETER + "=" + ACTIVITY_LEVEL_DEFAULT_VALUE});
-        queryParamsMap.put(BURNED_CALORIE_ENDPOINT, new String[] {ACTIVITY_ID_PARAMETER + "=" + ACTIVITY_ID_DEFAULT_VALUE, ACTIVITY_MIN_PARAMETER + "=" + ACTIVITY_MIN_DEFAULT_VALUE, WEIGHT_PARAMETER + "=" + WEIGHT_DEFAULT_VALUE});
-        queryParamsMap.put(DAILY_CALORIE_ENDPOINT, new String[] {AGE_PARAMETER + "=" + AGE_DEFAULT_VALUE, GENDER_PARAMETER + "=" + GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER + "=" + HEIGHT_DEFAULT_VALUE, WEIGHT_PARAMETER + "=" + WEIGHT_DEFAULT_VALUE, ACTIVITY_LEVEL_PARAMETER + "=" + ACTIVITY_LEVEL_DEFAULT_VALUE, GOAL_PARAMETER + "=" + GOAL_DEFAULT_VALUE});
+//        queryParamsMap.put(IDEAL_WEIGHT_ENDPOINT, new String[] {GENDER_PARAMETER + "=" + GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER + "=" + HEIGHT_DEFAULT_VALUE});
+        queryParamsMap.put(IDEAL_WEIGHT_ENDPOINT, new String[] {GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE)});
+        queryParamsMap.put(BMI_ENDPOINT, new String[] {AGE_PARAMETER, String.valueOf(AGE_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE), HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE)});
+        queryParamsMap.put(MACROS_CALCULATOR_ENDPOINT, new String[] {AGE_PARAMETER, String.valueOf(AGE_DEFAULT_VALUE), GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE), ACTIVITY_LEVEL_PARAMETER, String.valueOf(ACTIVITY_LEVEL_DEFAULT_VALUE)});
+        queryParamsMap.put(BURNED_CALORIE_ENDPOINT, new String[] {ACTIVITY_ID_PARAMETER, ACTIVITY_ID_DEFAULT_VALUE, ACTIVITY_MIN_PARAMETER, String.valueOf(ACTIVITY_MIN_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE)});
+        queryParamsMap.put(DAILY_CALORIE_ENDPOINT, new String[] {AGE_PARAMETER, String.valueOf(AGE_DEFAULT_VALUE), GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE), ACTIVITY_LEVEL_PARAMETER, String.valueOf(ACTIVITY_LEVEL_DEFAULT_VALUE), GOAL_PARAMETER, GOAL_DEFAULT_VALUE});
 
         if (!queryParamsMap.containsKey(endpointCucumber)) {
             throw new Exception("Endpoint is not valid: " + endpointCucumber);
@@ -221,15 +226,19 @@ public class CommonSteps implements Constants {
         String[] queryParams = queryParamsMap.get(endpointCucumber);
 
         RequestSpecification requestSpec = given();
+
         for (int i = 0; i < headerNames.length; i++) {
             requestSpec = requestSpec.header(headerNames[i], headerValues[i]);
         }
-        for (String queryParam : queryParams) {
-            requestSpec = requestSpec.queryParam(queryParam);
+//        for (String queryParam : queryParams) {
+//            requestSpec = requestSpec.queryParam(queryParam);
+//        }
+        for (int i = 0; i < queryParams.length; i += 2) {
+            requestSpec = requestSpec.queryParam(queryParams[i], queryParams[i + 1]);
         }
 
-//        System.out.println(requestSpec.get);
-        //TODO parece que nao tá enviando os 2 headers
+        // Log Everything
+        requestSpec.log().everything();
 
         return requestSpec;
     }

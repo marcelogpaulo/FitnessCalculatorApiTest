@@ -29,7 +29,7 @@ public class IdealWeightSteps implements Constants {
         commonSteps.validateResponseBodyElementsAreNotNull();
         commonSteps.saveResponseBodyAsObject();
         commonSteps.validateRequestResult();
-        validateRequestErrors();
+        validateRequestErrors();;
     }
 
     public void validateRequestErrors() {

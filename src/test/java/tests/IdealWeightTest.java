@@ -8,10 +8,9 @@ import org.junit.runner.RunWith;
 @CucumberOptions(
 //        tags = "@Calculator",
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        features = "src/test/resources/features",
+        features = "src/test/resources/features/CalculatorsIdealWeight.feature",
         glue = {"steps"}
-//        , plugin = {"pretty, io.qameta.allure.cucumberjvm.AllureCucumberJvm"}
 )
 
-public class AllFeaturesTests {
+public class IdealWeightTest {
 }

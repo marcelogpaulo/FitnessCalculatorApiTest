@@ -144,7 +144,7 @@ public class CommonSteps implements Constants {
 //        }
     }
 
-    public RequestSpecification getRequestSpecificationWithAllParametersTESTGGG() throws Exception {
+    public RequestSpecification getRequestSpecificationWithAllParameters() throws Exception {
         switch (endpointCucumber) {
             case IDEAL_WEIGHT_ENDPOINT -> {
                 return requestHeadersAndAllParameters = given()
@@ -165,7 +165,8 @@ public class CommonSteps implements Constants {
 //                        .queryParams(AGE_PARAMETER, AGE_DEFAULT_VALUE, WEIGHT_PARAMETER, WEIGHT_DEFAULT_VALUE, HEIGHT_PARAMETER, HEIGHT_DEFAULT_VALUE)
                         .queryParams(QueryParams.getAgeParams())
                         .queryParams(QueryParams.getWeightParams())
-                        .queryParams(QueryParams.getHeightParams());
+                        .queryParams(QueryParams.getHeightParams())
+                        .log().everything();
             }
             case MACROS_CALCULATOR_ENDPOINT -> {
                 return requestHeadersAndAllParameters = given()
@@ -177,7 +178,8 @@ public class CommonSteps implements Constants {
                         .queryParams(QueryParams.getGenderParams())
                         .queryParams(QueryParams.getHeightParams())
                         .queryParams(QueryParams.getWeightParams())
-                        .queryParams(QueryParams.getActivityLevelParams());
+                        .queryParams(QueryParams.getActivityLevelParams())
+                        .log().everything();
             }
             case BURNED_CALORIE_ENDPOINT -> {
                 return requestHeadersAndAllParameters = given()
@@ -187,7 +189,8 @@ public class CommonSteps implements Constants {
 //                        .queryParams(ACTIVITY_ID_PARAMETER, ACTIVITY_ID_DEFAULT_VALUE, ACTIVITY_MIN_PARAMETER, ACTIVITY_MIN_DEFAULT_VALUE, WEIGHT_PARAMETER, WEIGHT_DEFAULT_VALUE)
                         .queryParams(QueryParams.getActivityIdParams())
                         .queryParams(QueryParams.getActivityMinParams())
-                        .queryParams(QueryParams.getWeightParams());
+                        .queryParams(QueryParams.getWeightParams())
+                        .log().everything();
             }
             case DAILY_CALORIE_ENDPOINT -> {
                 return requestHeadersAndAllParameters = given()
@@ -207,7 +210,7 @@ public class CommonSteps implements Constants {
         }
     }
 
-    public RequestSpecification getRequestSpecificationWithAllParameters() throws Exception {
+    public RequestSpecification getRequestSpecificationWithAllParametersTESTGGG() throws Exception {
         String[] headerNames = {API_KEY_KEY, API_HOST_KEY};
         String[] headerValues = {API_KEY_VALUE, API_HOST_VALUE};
 

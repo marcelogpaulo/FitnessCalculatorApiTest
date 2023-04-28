@@ -1,2 +1,5 @@
 /home/marcelo/automation/FitnessCalculatorApiTest/src/main/java/constants/Constants.java
 /home/marcelo/automation/FitnessCalculatorApiTest/src/main/java/utils/BaseResponseModel.java
+/home/marcelo/automation/FitnessCalculatorApiTest/src/main/java/utils/QueryParams.java
+/home/marcelo/automation/FitnessCalculatorApiTest/src/main/java/utils/HeaderParams.java
+/home/marcelo/automation/FitnessCalculatorApiTest/src/main/java/utils/EndpointSchemas.java

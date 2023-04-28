@@ -1,2 +1,5 @@
+utils/EndpointSchemas.class
+utils/HeaderParams.class
 utils/BaseResponseModel.class
 constants/Constants.class
+utils/QueryParams.class

@@ -1,7 +1,6 @@
 package steps;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.util.Separators;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import constants.Constants;
@@ -19,7 +18,6 @@ import utils.EndpointSchemas;
 import utils.HeaderParams;
 import utils.QueryParams;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,6 +35,9 @@ public class CommonSteps implements Constants {
     public static Response responseCommon;
     public static int statusCodeCommon;
     public static Map<String, String> endpointSchemas = EndpointSchemas.getEndpointSchemas();
+    public static Map<String, String> requestHeader;
+    public static Map<String, String[]> queryParamsMap;
+    public static String[] queryParams;
     public static String schemaPath;
     public static String endpointCucumber;
     public static RequestSpecification requestHeadersAndOnlyOneParameter;
@@ -144,7 +145,7 @@ public class CommonSteps implements Constants {
 //        }
     }
 
-    public RequestSpecification getRequestSpecificationWithAllParameters() throws Exception {
+    public RequestSpecification getRequestSpecificationWithAllParametersTESTGGG() throws Exception {
         switch (endpointCucumber) {
             case IDEAL_WEIGHT_ENDPOINT -> {
                 return requestHeadersAndAllParameters = given()
@@ -210,32 +211,18 @@ public class CommonSteps implements Constants {
         }
     }
 
-    public RequestSpecification getRequestSpecificationWithAllParametersTESTGGG() throws Exception {
-        String[] headerNames = {API_KEY_KEY, API_HOST_KEY};
-        String[] headerValues = {API_KEY_VALUE, API_HOST_VALUE};
+    public RequestSpecification getRequestSpecificationWithAllParameters() {
 
-        Map<String, String[]> queryParamsMap = new HashMap<>();
-//        queryParamsMap.put(IDEAL_WEIGHT_ENDPOINT, new String[] {GENDER_PARAMETER + "=" + GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER + "=" + HEIGHT_DEFAULT_VALUE});
-        queryParamsMap.put(IDEAL_WEIGHT_ENDPOINT, new String[] {GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE)});
-        queryParamsMap.put(BMI_ENDPOINT, new String[] {AGE_PARAMETER, String.valueOf(AGE_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE), HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE)});
-        queryParamsMap.put(MACROS_CALCULATOR_ENDPOINT, new String[] {AGE_PARAMETER, String.valueOf(AGE_DEFAULT_VALUE), GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE), ACTIVITY_LEVEL_PARAMETER, String.valueOf(ACTIVITY_LEVEL_DEFAULT_VALUE)});
-        queryParamsMap.put(BURNED_CALORIE_ENDPOINT, new String[] {ACTIVITY_ID_PARAMETER, ACTIVITY_ID_DEFAULT_VALUE, ACTIVITY_MIN_PARAMETER, String.valueOf(ACTIVITY_MIN_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE)});
-        queryParamsMap.put(DAILY_CALORIE_ENDPOINT, new String[] {AGE_PARAMETER, String.valueOf(AGE_DEFAULT_VALUE), GENDER_PARAMETER, GENDER_DEFAULT_VALUE, HEIGHT_PARAMETER, String.valueOf(HEIGHT_DEFAULT_VALUE), WEIGHT_PARAMETER, String.valueOf(WEIGHT_DEFAULT_VALUE), ACTIVITY_LEVEL_PARAMETER, String.valueOf(ACTIVITY_LEVEL_DEFAULT_VALUE), GOAL_PARAMETER, GOAL_DEFAULT_VALUE});
-
-        if (!queryParamsMap.containsKey(endpointCucumber)) {
-            throw new Exception("Endpoint is not valid: " + endpointCucumber);
-        }
-
-        String[] queryParams = queryParamsMap.get(endpointCucumber);
+        requestHeader = HeaderParams.getApiHeaders();
+        queryParamsMap = QueryParams.getQueryParamsMap();
+        queryParams = queryParamsMap.get(endpointCucumber);
 
         RequestSpecification requestSpec = given();
 
-        for (int i = 0; i < headerNames.length; i++) {
-            requestSpec = requestSpec.header(headerNames[i], headerValues[i]);
+        for (Map.Entry<String, String> entry : requestHeader.entrySet()) {
+            requestSpec = requestSpec.header(entry.getKey(), entry.getValue());
         }
-//        for (String queryParam : queryParams) {
-//            requestSpec = requestSpec.queryParam(queryParam);
-//        }
+
         for (int i = 0; i < queryParams.length; i += 2) {
             requestSpec = requestSpec.queryParam(queryParams[i], queryParams[i + 1]);
         }
